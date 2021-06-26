@@ -1,0 +1,1 @@
+# -*- coding: utf-8 -*-"""@Time    : 2021/6/23 20:27@Author  : huangkai21@file    : logger_config.py"""import loggingimport syslogging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO, stream=sys.stdout)logger = logging.getLogger('New Word Discovery')if __name__ == '__main__':    logger.info("i love you")

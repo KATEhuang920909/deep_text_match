@@ -1,0 +1,1 @@
+# -*- coding: utf-8 -*-"""@Time    : 2021/6/23 20:57@Author  : huangkai21@file    : duet_args.py"""seq_length = 15learning_rate = 0.0005keep_prob = 0.7vocab_size = 7901class_size = 2epochs = 50batch_size = 512char_embedding_size = 256cnn1_filters = 300filter_width = 1filter_width2 = 3
