@@ -38,11 +38,6 @@ class Graph:
 
         return x
 
-    @staticmethod
-    def output(q, d):
-        cosine = tf.add(q, d)
-
-        return cosine
 
     def forward(self):
         q_embedding = tf.nn.embedding_lookup(self.embedding, self.q)
