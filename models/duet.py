@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-@Time    : 2021/6/23 20:57
-@Author  : huangkai21
-@file    : duet.py
+Time    : 2021/6/23 20:57
+Author : huangkai
+File : duet.py
+mail:18707125049@163.com
+paper:https://www.microsoft.com/en-us/research/wp-content/uploads/2016/10/wwwfp0192-mitra.pdf
 """
 import tensorflow as tf
 from args import duet_args
@@ -37,7 +39,6 @@ class Graph:
         x = tf.layers.dense(x, 1)
 
         return x
-
 
     def forward(self):
         q_embedding = tf.nn.embedding_lookup(self.embedding, self.q)
