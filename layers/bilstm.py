@@ -33,12 +33,21 @@ class BiLSTM(object):
 
     @staticmethod
     def model(x, dropout, hidden_units):
-        fw_cell = tf.nn.rnn_cell.BasicLSTMCell(hidden_units)
-        fw_cell = tf.nn.rnn_cell.DropoutWrapper(fw_cell, output_keep_prob=dropout)
-        bw_cell = tf.nn.rnn_cell.BasicLSTMCell(hidden_units)
-        bw_cell = tf.nn.rnn_cell.DropoutWrapper(bw_cell, output_keep_prob=dropout)
+        n_layers = 3
+        stacked_rnn_fw = []
+        stacked_rnn_bw = []
+        for _i in range(n_layers):
+            fw_cell = tf.nn.rnn_cell.BasicLSTMCell(hidden_units)
+            fw_cell = tf.nn.rnn_cell.DropoutWrapper(fw_cell, output_keep_prob=dropout)
+            stacked_rnn_fw.append(fw_cell)
+        lstm_fw_cell_m = tf.nn.rnn_cell.MultiRNNCell(cells=stacked_rnn_fw, state_is_tuple=True)
 
-        outputs, _ = tf.nn.bidirectional_dynamic_rnn(fw_cell, bw_cell, x, dtype=tf.float32)
+        for _i in range(n_layers):
+            bw_cell = tf.nn.rnn_cell.BasicLSTMCell(hidden_units)
+            bw_cell = tf.nn.rnn_cell.DropoutWrapper(bw_cell, output_keep_prob=dropout)
+            stacked_rnn_bw.append(bw_cell)
+        lstm_bw_cell_m = tf.nn.rnn_cell.MultiRNNCell(cells=stacked_rnn_bw, state_is_tuple=True)
+        outputs, _ = tf.nn.bidirectional_dynamic_rnn(lstm_fw_cell_m, lstm_bw_cell_m, x, dtype=tf.float32)
         return tf.concat(outputs, 2)
 
     def cosine(self, q, a):
