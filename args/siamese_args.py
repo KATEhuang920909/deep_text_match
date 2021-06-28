@@ -17,9 +17,9 @@ vocab_size = 7901
 
 class_size = 2
 
-epochs = 50
+epochs = 1
 
-batch_size = 128
+batch_size = 256
 
 char_embedding_size = 256
 

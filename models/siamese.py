@@ -39,7 +39,7 @@ class Graph:
     def contrastive_loss(y, d):
         tmp = (1 - y) * tf.square(d)
         # tmp= tf.mul(y,tf.square(d))
-        tmp2 = y * tf.square(tf.maximum((1 - d), 0))
+        tmp2 = y * tf.square(tf.maximum((1 - d), 0))/4
         return tmp + tmp2
 
     @staticmethod
@@ -55,11 +55,11 @@ class Graph:
         p_embedding = tf.nn.embedding_lookup(self.embedding, self.q)
         h_embedding = tf.nn.embedding_lookup(self.embedding, self.d)
 
-        with tf.variable_scope("lstm_p", reuse=tf.AUTO_REUSE):
+        with tf.variable_scope("lstm_p"):
             out1 = BiLSTM.model(x=p_embedding,
                                 dropout=self.keep_prob,
                                 hidden_units=siamese_args.embedding_hidden_size)
-        with tf.variable_scope("lstm_p", reuse=tf.AUTO_REUSE):
+        with tf.variable_scope("lstm_p",reuse=True):
             out2 = BiLSTM.model(x=h_embedding,
                                 dropout=self.keep_prob,
                                 hidden_units=siamese_args.embedding_hidden_size)
@@ -67,13 +67,15 @@ class Graph:
         output2 = tf.reduce_mean(out2, axis=1)
         print('output1', output1.shape)
         print('output2', output2.shape)
-        with tf.variable_scope("feedforward_128", reuse=tf.AUTO_REUSE):
+        with tf.variable_scope("feedforward_128"):
             intermediate_output1 = tf.layers.dense(output1, 128, activation=tf.nn.relu)
-            intermediate_output1 = tf.nn.dropout(intermediate_output1, keep_prob=0.9)
+            intermediate_output1 = tf.layers.dropout(intermediate_output1, rate=0.1)
+            intermediate_output1 = tf.layers.batch_normalization(intermediate_output1)
         output1 = tf.reshape(intermediate_output1, (-1, 128))
-        with tf.variable_scope("feedforward_128", reuse=tf.AUTO_REUSE):
+        with tf.variable_scope("feedforward_128",reuse=True):
             intermediate_output2 = tf.layers.dense(output2, 128, activation=tf.nn.relu)
-            intermediate_output2 = tf.nn.dropout(intermediate_output2, keep_prob=0.9)
+            intermediate_output2 = tf.layers.dropout(intermediate_output2, rate=0.1)
+            intermediate_output2 = tf.layers.batch_normalization(intermediate_output2)
         output2 = tf.reshape(intermediate_output2, (-1, 128))
         print('output1', output1.shape)
         print('output2', output2.shape)
@@ -81,7 +83,6 @@ class Graph:
         neg_result = 1 - result
         print('result', result.shape)
         logits = tf.concat([result, neg_result], axis=1)
-        self.prob = tf.nn.softmax(logits)
 
         self.train(logits)
 
