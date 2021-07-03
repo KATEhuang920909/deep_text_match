@@ -1,0 +1,1 @@
+# -*- coding: utf-8 -*-"""@Time    : 2021/7/1 10:05@Author  : huangkai21@file    : drmm_args.py"""query_seq_length = 15document_seq_length = 15vocab_size = 7901char_embedding_size = 256batch_size = 512epochs = 10keep_prob = 0.8class_size = 2learning_rate = 0.0005
