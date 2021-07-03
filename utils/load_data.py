@@ -5,7 +5,7 @@ import jieba
 import re
 from gensim.models import Word2Vec
 import numpy as np
-from args import drcn_args
+from args import drmm_args
 
 
 def text2vec(txt):
@@ -71,7 +71,7 @@ def w2v(word, model):
     try:
         return model.wv[word]
     except:
-        return np.zeros(drcn_args.word_embedding_len)
+        return np.zeros(drmm_args.word_embedding_len)
 
 
 # 字->index
@@ -86,8 +86,8 @@ def char_index(p_sentences, h_sentences):
         p_list.append(p)
         h_list.append(h)
 
-    p_list = pad_sequences(p_list, maxlen=drcn_args.max_char_len)
-    h_list = pad_sequences(h_list, maxlen=drcn_args.max_char_len)
+    p_list = pad_sequences(p_list, maxlen=drmm_args.query_seq_length)
+    h_list = pad_sequences(h_list, maxlen=drmm_args.document_seq_length)
 
     return p_list, h_list
 
@@ -104,18 +104,18 @@ def word_index(p_sentences, h_sentences):
         p_list.append(p)
         h_list.append(h)
 
-    p_list = pad_sequences(p_list, maxlen=drcn_args.max_char_len)
-    h_list = pad_sequences(h_list, maxlen=drcn_args.max_char_len)
+    p_list = pad_sequences(p_list, maxlen=drmm_args.max_char_len)
+    h_list = pad_sequences(h_list, maxlen=drmm_args.max_char_len)
 
     return p_list, h_list
 
 
 def w2v_process(vec):
-    if len(vec) > drcn_args.max_word_len:
-        vec = vec[0:drcn_args.max_word_len]
-    elif len(vec) < drcn_args.max_word_len:
-        zero = np.zeros(drcn_args.word_embedding_len)
-        length = drcn_args.max_word_len - len(vec)
+    if len(vec) > drmm_args.max_word_len:
+        vec = vec[0:drmm_args.max_word_len]
+    elif len(vec) < drmm_args.max_word_len:
+        zero = np.zeros(drmm_args.word_embedding_len)
+        length = drmm_args.max_word_len - len(vec)
         for i in range(length):
             vec = np.vstack((vec, zero))
     return vec
