@@ -11,7 +11,7 @@ seq_length = 15
 
 learning_rate = 0.0005
 
-keep_prob = 0.7
+keep_prob = 0.8
 
 vocab_size = 7901
 

@@ -70,11 +70,11 @@ class Graph:
         # fc
         with tf.variable_scope("feedforward_128"):
             intermediate_output1 = tf.layers.dense(output1, 128, activation=tf.nn.relu)
-            intermediate_output1 = tf.layers.dropout(intermediate_output1, rate=0.1)
+            intermediate_output1 = tf.layers.dropout(intermediate_output1, rate=0.4)
             intermediate_output1 = tf.layers.batch_normalization(intermediate_output1)
         with tf.variable_scope("feedforward_128", reuse=True):
             intermediate_output2 = tf.layers.dense(output2, 128, activation=tf.nn.relu)
-            intermediate_output2 = tf.layers.dropout(intermediate_output2, rate=0.1)
+            intermediate_output2 = tf.layers.dropout(intermediate_output2, rate=0.4)
             intermediate_output2 = tf.layers.batch_normalization(intermediate_output2)
         output1 = tf.reshape(intermediate_output1, (-1, 128))
         output2 = tf.reshape(intermediate_output2, (-1, 128))
