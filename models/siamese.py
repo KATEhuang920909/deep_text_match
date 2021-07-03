@@ -22,7 +22,8 @@ class Graph:
         if embedding_type == "ONE_HOT":
             self.embedding = tf.get_variable(dtype=tf.float32,
                                              shape=(siamese_args.vocab_size, siamese_args.char_embedding_size),
-                                             name='embedding')
+                                             name='embedding',
+                                             trainable=True)
         elif embedding_type == "WORD2VEC":
             self.embedding = tf.get_variable(dtype=tf.float32, initializer=embedding, trainable=False)
         self.forward()
