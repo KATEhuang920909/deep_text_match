@@ -28,7 +28,7 @@ config.gpu_options.per_process_gpu_memory_fraction = 0.9
 
 with tf.Session(config=config)as sess:
     sess.run(tf.global_variables_initializer())
-    writer = tf.summary.FileWriter(r'D:\learning\文本匹配\deep_text_match\output\dssm', sess.graph)
+    writer = tf.summary.FileWriter(r'D:\learning\text_match\deep_text_match\output\dssm', sess.graph)
     sess.run(iterator.initializer, feed_dict={p_holder: p, h_holder: h, y_holder: y})
     steps = int(len(y) / dssm_args.batch_size)
     for epoch in range(dssm_args.epochs):
