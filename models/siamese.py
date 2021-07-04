@@ -56,11 +56,11 @@ class Graph:
         p_embedding = tf.nn.embedding_lookup(self.embedding, self.q)
         h_embedding = tf.nn.embedding_lookup(self.embedding, self.d)
 
-        with tf.variable_scope("lstm_p"):
+        with tf.variable_scope("lstm_f", reuse=tf.AUTO_REUSE):
             out1 = BiLSTM.model(x=p_embedding,
                                 dropout=self.keep_prob,
                                 hidden_units=siamese_args.embedding_hidden_size)
-        with tf.variable_scope("lstm_p", reuse=True):
+        with tf.variable_scope("lstm_b", reuse=tf.AUTO_REUSE):
             out2 = BiLSTM.model(x=h_embedding,
                                 dropout=self.keep_prob,
                                 hidden_units=siamese_args.embedding_hidden_size)
