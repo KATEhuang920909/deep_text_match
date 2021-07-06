@@ -16,7 +16,7 @@ saver = tf.train.Saver()
 
 with tf.Session()as sess:
     sess.run(tf.global_variables_initializer())
-    saver.restore(sess, '../../output/dssm/dssm_49.ckpt')
+    saver.restore(sess, '../../output/drmm/drmm_49.ckpt')
     loss, acc = sess.run([model.loss, model.acc],
                          feed_dict={model.q: p,
                                     model.d: h,
