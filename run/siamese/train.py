@@ -5,11 +5,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 from utils.logger_config import logger
 from models.siamese import Graph
 import tensorflow as tf
-from utils.load_data import load_char_data
+from utils.load_data import Data2idx
 from args import siamese_args
 
-p, h, y = load_char_data('data/train.csv', data_size=None)
-p_eval, h_eval, y_eval = load_char_data('data/dev.csv', data_size=None)
+data2idx = Data2idx(siamese_args.seq_length, siamese_args.seq_length)
+p, h, y = data2idx.load_char_data('data/train.csv')
+p_eval, h_eval, y_eval = data2idx.load_char_data('data/dev.csv')
 
 p_holder = tf.placeholder(dtype=tf.int32, shape=(None, siamese_args.seq_length), name='p')
 h_holder = tf.placeholder(dtype=tf.int32, shape=(None, siamese_args.seq_length), name='h')
