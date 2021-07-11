@@ -11,14 +11,14 @@ from args import duet_args
 
 
 class Graph:
-    def __init__(self, embedding_type="ONE_HOT", embedding=None):
+    def __init__(self, embedding_type="RANDOM_INIT", embedding=None):
         self.q = tf.placeholder(dtype=tf.int32, shape=(None, duet_args.seq_length), name='q')
         self.d = tf.placeholder(dtype=tf.int32, shape=(None, duet_args.seq_length), name='d')
         self.y = tf.placeholder(dtype=tf.int32, shape=None, name='y')
 
         self.keep_prob = tf.placeholder(dtype=tf.float32, name='drop_rate')
         #
-        if embedding_type == "ONE_HOT":
+        if embedding_type == "RANDOM_INIT":
             self.embedding = tf.get_variable(dtype=tf.float32,
                                              shape=(duet_args.vocab_size, duet_args.char_embedding_size),
                                              name='embedding')

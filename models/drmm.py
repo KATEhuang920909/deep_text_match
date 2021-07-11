@@ -14,14 +14,14 @@ from collections import Counter
 
 
 class Graph:
-    def __init__(self, embedding_type="ONE_HOT", embedding=None):
+    def __init__(self, embedding_type="RANDOM_INIT", embedding=None):
         self.q = tf.placeholder(dtype=tf.int32, shape=(None, drmm_args.query_seq_length), name='q')
         self.d = tf.placeholder(dtype=tf.int32, shape=(None, drmm_args.document_seq_length), name='d')
         self.y = tf.placeholder(dtype=tf.int32, shape=None, name='y')
 
         self.keep_prob = tf.placeholder(dtype=tf.float32, name='drop_rate')
         #
-        if embedding_type == "ONE_HOT":
+        if embedding_type == "RANDOM_INIT":
             self.embedding = tf.get_variable(dtype=tf.float32,
                                              shape=(drmm_args.vocab_size, drmm_args.char_embedding_size),
                                              name='embedding',
@@ -144,13 +144,14 @@ class Graph:
 
         output = output_2 / output_1
         print("cos shape", output.shape)
-        output = tf.transpose(output, [1, 0, 2])
+        # output = tf.transpose(output, [1, 0, 2])
         print("before histogram mapping:", output.shape)
-
+        output = tf.unstack(output, axis=1)  # list [[batch_size,embedding_size],...
         # histogram mapping
         output = tf.map_fn(fn=lambda x: self.bucket_histogram(x, histogram_type="CH", sim_type="cos"),
                            elems=output,
-                           name="histogram_mapping")
+                           name="histogram_mapping",
+                           dtype=tf.float32)
         print("histogram mapping:", output.shape)
 
         # output shape : (batch_size,seq_len,bins)
@@ -158,11 +159,10 @@ class Graph:
                            elems=output,
                            name="full_connected")
         print("outputshaoe0:", output.shape)
-        output = tf.transpose(output, [1, 0, 2])
         # output shape :(batch_size,seq_len,1)
-        print("outputshaoe:", output.shape)
         # gate network
         q_embedding_gate = tf.transpose(q_embedding, [1, 0, 2])
+
         term_gating = tf.map_fn(fn=lambda x: self.gate_network(x),
                                 elems=q_embedding_gate,
                                 name="term_gate")

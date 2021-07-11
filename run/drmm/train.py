@@ -9,8 +9,8 @@ from utils.load_data import Data2idx
 from args import drmm_args
 
 data2idx = Data2idx(drmm_args.query_seq_length, drmm_args.document_seq_length)
-p, h, y = data2idx.load_char_data('data/train.csv')
-p_eval, h_eval, y_eval = data2idx.load_char_data('data/dev.csv')
+p, h, y = data2idx.load_char_idx('data/train.csv')
+p_eval, h_eval, y_eval = data2idx.load_char_idx('data/dev.csv')
 
 p_holder = tf.placeholder(dtype=tf.int32, shape=(None, drmm_args.query_seq_length), name='p')
 h_holder = tf.placeholder(dtype=tf.int32, shape=(None, drmm_args.document_seq_length), name='h')

@@ -3,14 +3,14 @@ from args import dssm_args
 
 
 class Graph:
-    def __init__(self, embedding_type="ONE_HOT", embedding=None):
+    def __init__(self, embedding_type="RANDOM_INIT", embedding=None):
         self.p = tf.placeholder(dtype=tf.int32, shape=(None, dssm_args.seq_length), name='p')
         self.h = tf.placeholder(dtype=tf.int32, shape=(None, dssm_args.seq_length), name='h')
         self.y = tf.placeholder(dtype=tf.int32, shape=None, name='y')
 
         self.keep_prob = tf.placeholder(dtype=tf.float32, name='drop_rate')
         #
-        if embedding_type == "ONE_HOT":
+        if embedding_type == "RANDOM_INIT":
             self.embedding = tf.get_variable(dtype=tf.float32,
                                              shape=(dssm_args.vocab_size, dssm_args.char_embedding_size),
                                              name='embedding')
@@ -32,8 +32,7 @@ class Graph:
 
         return x
 
-    @staticmethod
-    def cosine(p, h):
+    def cosine(self, p, h):
         p_norm = tf.norm(p, axis=1, keepdims=True)
         h_norm = tf.norm(h, axis=1, keepdims=True)
 

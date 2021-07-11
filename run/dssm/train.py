@@ -9,8 +9,8 @@ from utils.load_data import Data2idx
 from args import dssm_args
 
 data2idx = Data2idx(dssm_args.seq_length, dssm_args.seq_length)
-p, h, y = data2idx.load_char_data('data/train.csv')
-p_eval, h_eval, y_eval = data2idx.load_char_data('data/dev.csv')
+p, h, y = data2idx.load_char_idx('data/train.csv')
+p_eval, h_eval, y_eval = data2idx.load_char_idx('data/dev.csv')
 
 p_holder = tf.placeholder(dtype=tf.int32, shape=(None, dssm_args.seq_length), name='p')
 h_holder = tf.placeholder(dtype=tf.int32, shape=(None, dssm_args.seq_length), name='h')
@@ -29,7 +29,7 @@ config.gpu_options.per_process_gpu_memory_fraction = 0.9
 
 with tf.Session(config=config)as sess:
     sess.run(tf.global_variables_initializer())
-    writer = tf.summary.FileWriter(r'D:\learning\text_match\deep_text_match\output\dssm', sess.graph)
+    writer = tf.summary.FileWriter(r'../../output/dssm', sess.graph)
     sess.run(iterator.initializer, feed_dict={p_holder: p, h_holder: h, y_holder: y})
     steps = int(len(y) / dssm_args.batch_size)
     for epoch in range(dssm_args.epochs):
