@@ -9,6 +9,7 @@ class Data2idx(object):
         self.query_seq_length = query_seq_length
         self.document_seq_length = document_seq_length
         path = os.path.join(os.path.dirname(__file__), '../data/vocab.txt')
+        print("test")
         self.vocab = [line.strip() for line in open(path, encoding='utf-8').readlines()]
         self.char2idx = {char: index for index, char in enumerate(self.vocab)}
 
@@ -22,12 +23,13 @@ class Data2idx(object):
     def char_index(self, querys, documents, query_seq_length, document_seq_length):
 
         q_list, d_list = [], []
-        for query, document in zip(querys, documents):
-            q_l = [self.idx(word) for word in query if word.strip()]
-            d_l = [self.idx(word) for word in document if word.strip()]
+        char2idx = self.char2idx
+        for query, document in tqdm(zip(querys, documents)):
+            q_l = [char2idx[word.strip()] for word in query if word.strip() and word in char2idx.keys()]
+            d_l = [char2idx[word.strip()] for word in document if word.strip() and word in char2idx.keys()]
             q_list.append(q_l)
             d_list.append(d_l)
-
+        print("test1")
         q_list = pad_sequences(q_list, maxlen=query_seq_length)
         d_list = pad_sequences(d_list, maxlen=document_seq_length)
 

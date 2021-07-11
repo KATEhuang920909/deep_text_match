@@ -11,10 +11,12 @@ from args import bimpm_args
 
 
 class Graph:
-    def __init__(self, embedding_type="ONE_HOT", embedding=None):
-        self.p = tf.placeholder(dtype=tf.int32, shape=(None, bimpm_args.seq_length), name='p')
-        self.h = tf.placeholder(dtype=tf.int32, shape=(None, bimpm_args.seq_length), name='h')
-        self.y = tf.placeholder(dtype=tf.int32, shape=None, name='y')
+    def __init__(self, embedding=None):
+        self.q_w = tf.placeholder(dtype=tf.int32, shape=(None, bimpm_args.max_word_len), name="q_w")
+        self.q_c = tf.placeholder(dtype=tf.int32, shape=(None, bimpm_args.max_char_len), name="q_c")
+        self.d_w = tf.placeholder(dtype=tf.int32, shape=(None, bimpm_args.max_word_len), name="d_w")
+        self.d_c = tf.placeholder(dtype=tf.int32, shape=(None, bimpm_args.max_char_len), name="d_c")
+        self.y = tf.placeholder(dtype=tf.int32, shape=None, name="y")
 
         self.keep_prob = tf.placeholder(dtype=tf.float32, name='drop_rate')
         #
@@ -58,7 +60,25 @@ class Graph:
         pos_result = self.cosine(p_context, h_context)
         neg_result = 1 - pos_result
 
-        logits = tf.concat([pos_result, neg_result], axis=1)
+        # ----- Aggregation Layer -----
+        with tf.variable_scope("bilstm_agg_p", reuse=tf.AUTO_REUSE):
+            (q_f_last, q_b_last), _ = self.bilstm(q_final_output)
+        with tf.variable_scope("bilstm_agg_h", reuse=tf.AUTO_REUSE):
+            (d_f_last, d_b_last), _ = self.bilstm(d_final_output)
+
+        x = tf.concat((q_f_last, q_b_last, d_f_last, d_b_last), axis=2)
+        x = tf.reshape(x, shape=[-1, x.shape[1] * x.shape[2]])
+        # batch_size ,len*hidden_size*4
+        x = tf.nn.dropout(x, keep_prob=0.9)
+        # ----- Prediction Layer -----
+        # x = tf.layers.dense(x, 20000, activation='relu')
+        # x = self.dropout(x)
+        x = tf.layers.dense(x, 1024, activation='tanh')
+        x = tf.nn.dropout(x, keep_prob=0.9)
+        x = tf.layers.dense(x, 512)
+        x = tf.nn.dropout(x, keep_prob=0.9)
+        # x = self.dropout(x)
+        logits = tf.layers.dense(x, bimpm_args.class_size)
 
         self.train(logits)
 
